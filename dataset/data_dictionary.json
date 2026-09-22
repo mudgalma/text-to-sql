@@ -1,0 +1,50 @@
+{
+  "metrics": {
+    "revenue": "quantity * unit_price * (1 - discount)",
+    "profit": "profit",
+    "orders": "count(order_id)",
+    "avg_order_value": "SUM(revenue) / orders"
+  },
+  "dimensions": [
+    "region",
+    "country",
+    "city",
+    "customer_id",
+    "customer_segment",
+    "product_category",
+    "product_subcategory",
+    "product_name",
+    "order_date"
+  ],
+  "synonyms": {
+    "sales": "revenue",
+    "income": "revenue",
+    "earnings": "profit",
+    "orders": "orders",
+    "aov": "avg_order_value",
+    "average order value": "avg_order_value",
+    "customer": "customer_id",
+    "customers": "customer_id",
+    "product": "product_name",
+    "products": "product_name",
+    "category": "product_category"
+  },
+  "time_mappings": {
+    "last month": "previous calendar month",
+    "this quarter": "current quarter",
+    "yoy": "year over year"
+  },
+  "targets": {
+    "revenue": "target_revenue"
+  },
+  "default_metric": "revenue",
+  "time_column_mapping": {
+    "month_names": "month",
+    "last_month": "month",
+    "this_month": "month",
+    "previous_month": "month",
+    "yoy": null,
+    "mom": null,
+    "qoq": null
+  }
+}

@@ -29,7 +29,7 @@ LOGGER = logging.getLogger(__name__)
 class OpenRouterAdapter:
     """Adapter to make OpenAI client satisfy the generate(system, user) -> str protocol."""
     
-    def __init__(self, client: Any, model: str = "anthropic/claude-3.5-haiku"):
+    def __init__(self, client: Any, model: str = "anthropic/claude-3-haiku"):
         self._client = client
         self._model = model
 

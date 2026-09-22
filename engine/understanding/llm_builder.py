@@ -59,7 +59,7 @@ class AnalyticalSpecOutput(BaseModel):
 class LLMSpecBuilder:
     """Build a spec through an injected Anthropic client, with one tool fallback."""
 
-    MODEL = "anthropic/claude-3.5-haiku"
+    MODEL = "anthropic/claude-3-haiku"
 
     def __init__(self, client: Any, semantic_layer: SemanticLayerProtocol) -> None:
         self._client = client
@@ -78,8 +78,8 @@ class LLMSpecBuilder:
                 response_format=AnalyticalSpecOutput,
             )
             return self._to_spec(response.choices[0].message.parsed)
-        except Exception as error:
-            LOGGER.warning("llm_structured_build_failed", exc_info=error)
+        except Exception:
+            LOGGER.warning("llm_structured_build_failed: falling back to tool use.")
             return self._build_via_tool_use(tagged)
 
     def _build_via_tool_use(self, tagged: TaggedQuery) -> AnalyticalSpec | None:
@@ -100,8 +100,8 @@ class LLMSpecBuilder:
                 import json
                 return self._to_spec(json.loads(message.tool_calls[0].function.arguments))
             return None
-        except Exception as error:
-            LOGGER.warning("llm_tool_build_failed", exc_info=error)
+        except Exception:
+            LOGGER.warning("llm_tool_build_failed: all fallbacks failed.")
             return None
 
     @staticmethod

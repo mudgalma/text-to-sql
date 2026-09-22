@@ -17,11 +17,11 @@ class SpecBuilder:
         self._llm_builder = llm_builder
 
     def build(self, tagged: TaggedQuery) -> AnalyticalSpec | None:
-        """Prefer a grounded optional LLM result and otherwise use deterministic rules."""
+        """Prefer deterministic rules and fallback to a grounded optional LLM result."""
 
-        spec = self._build_with_llm(tagged)
+        spec = self._rule_builder.build(tagged)
         if spec is None:
-            spec = self._rule_builder.build(tagged)
+            spec = self._build_with_llm(tagged)
         if spec is None:
             return None
         self._ensure_defaults_marked(spec, tagged)

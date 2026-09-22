@@ -16,6 +16,7 @@ from engine.scoring.scorer import ConfidenceScorer
 from engine.insight.explainer import ExplanationClient, Explainer
 from engine.understanding.llm_builder import LLMSpecBuilder
 import os
+from dotenv import load_dotenv
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.tagger import Tagger, TaggerError
 from engine.types import AnalyticalSpec
@@ -78,7 +79,7 @@ def run_pipeline(
     try:
         llm_client = None
         adapter = None
-        api_key = os.environ.get("OPENROUTER_API_KEY")
+        api_key = os.environ.get("OPEN_ROUTER_KEY") or os.environ.get("OPENROUTER_API_KEY")
         if api_key:
             from openai import OpenAI
             llm_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
@@ -186,6 +187,7 @@ def _failure_output(query: str, explanation: str) -> dict[str, Any]:
 def main() -> None:
     """Parse CLI arguments, run the batch, print it, and persist the JSON output."""
 
+    load_dotenv()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset-dir", default="dataset")
     parser.add_argument("--feedback-path")

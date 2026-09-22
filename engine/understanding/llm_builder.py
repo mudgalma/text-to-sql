@@ -7,7 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, ValidationError
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase4.prompts import build_system_prompt, build_user_prompt
+from engine.understanding.prompts import build_system_prompt, build_user_prompt
 from engine.types import (
     AnalyticalSpec,
     Filter,

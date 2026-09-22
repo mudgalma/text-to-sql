@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase4.rule_builder import RuleSpecBuilder
-from engine.phase4.temporal_anchor import TemporalAnchor
+from engine.understanding.rule_builder import RuleSpecBuilder
+from engine.understanding.temporal_anchor import TemporalAnchor
 from engine.types import AnalyticalSpec, Filter, TaggedQuery
 
 

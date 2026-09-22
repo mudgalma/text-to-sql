@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase6.executor import ExecutionResult
+from engine.execution.executor import ExecutionResult
 from engine.types import AnalyticalSpec, TaggedQuery
 
 

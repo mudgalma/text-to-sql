@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from engine.phase6.executor import Executor
-from engine.phase7.repairer import SelfCorrector
+from engine.execution.executor import Executor
+from engine.correction.repairer import SelfCorrector
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.types import AnalyticalSpec
 

@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from engine.phase4.llm_builder import AnalyticalSpecOutput, LLMSpecBuilder
+from engine.understanding.llm_builder import AnalyticalSpecOutput, LLMSpecBuilder
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.types import TaggedQuery
 

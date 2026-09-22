@@ -1,7 +1,7 @@
 """Tests for the deterministic explanation contract required by the assignment."""
 from __future__ import annotations
 
-from engine.phase9.explainer import Explainer
+from engine.insight.explainer import Explainer
 from engine.types import AnalyticalSpec, EntitySpan, OrderSpec, TaggedQuery, Token
 
 

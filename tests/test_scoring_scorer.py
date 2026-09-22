@@ -4,8 +4,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from engine.phase6.executor import ExecutionResult
-from engine.phase8.scorer import ConfidenceScorer
+from engine.execution.executor import ExecutionResult
+from engine.scoring.scorer import ConfidenceScorer
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.types import AnalyticalSpec, EntitySpan, TaggedQuery, Token
 

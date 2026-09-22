@@ -5,7 +5,7 @@ import logging
 import re
 from typing import Protocol
 
-from engine.phase9.prompts import EXPLAIN_SYSTEM, build_explanation_prompt
+from engine.insight.prompts import EXPLAIN_SYSTEM, build_explanation_prompt
 from engine.types import AnalyticalSpec, TaggedQuery
 
 

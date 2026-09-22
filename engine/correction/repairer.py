@@ -6,9 +6,9 @@ import logging
 from typing import Protocol
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase5.generator import SQLGenerator
-from engine.phase7.prompts import SQL_REPAIR_SYSTEM, build_sql_repair_prompt
-from engine.phase6.executor import ExecutionResult, Executor
+from engine.generation.generator import SQLGenerator
+from engine.correction.prompts import SQL_REPAIR_SYSTEM, build_sql_repair_prompt
+from engine.execution.executor import ExecutionResult, Executor
 from engine.types import AnalyticalSpec
 
 

@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from engine.phase10.feedback_store import FeedbackStore, FeedbackStoreError
+from engine.memory.feedback_store import FeedbackStore, FeedbackStoreError
 from main import run_pipeline
 
 

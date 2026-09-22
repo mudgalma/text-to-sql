@@ -5,7 +5,7 @@ import json
 from dataclasses import asdict
 from typing import Mapping
 
-from engine.phase5.prompts import SQL_GEN_SYSTEM, build_sql_schema_context
+from engine.generation.prompts import SQL_GEN_SYSTEM, build_sql_schema_context
 from engine.types import AnalyticalSpec
 
 

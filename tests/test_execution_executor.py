@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from engine.phase6.executor import Executor
+from engine.execution.executor import Executor
 from engine.semantic_layer import DuckDBSemanticLayer
 
 

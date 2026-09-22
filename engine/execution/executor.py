@@ -7,7 +7,7 @@ import logging
 import pandas as pd
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase5.generator import SQLGenerator
+from engine.generation.generator import SQLGenerator
 
 
 LOGGER = logging.getLogger(__name__)

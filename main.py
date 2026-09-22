@@ -7,13 +7,13 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from engine.phase10.feedback_store import FeedbackStore
-from engine.phase4.spec_builder import SpecBuilder
-from engine.phase5.generator import SQLGenerationError, SQLGenerator
-from engine.phase6.executor import Executor
-from engine.phase7.repairer import SelfCorrector
-from engine.phase8.scorer import ConfidenceScorer
-from engine.phase9.explainer import ExplanationClient, Explainer
+from engine.memory.feedback_store import FeedbackStore
+from engine.understanding.spec_builder import SpecBuilder
+from engine.generation.generator import SQLGenerationError, SQLGenerator
+from engine.execution.executor import Executor
+from engine.correction.repairer import SelfCorrector
+from engine.scoring.scorer import ConfidenceScorer
+from engine.insight.explainer import ExplanationClient, Explainer
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.tagger import Tagger, TaggerError
 from engine.types import AnalyticalSpec

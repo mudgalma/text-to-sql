@@ -8,8 +8,8 @@ from collections.abc import Iterable, Mapping
 from typing import Any, Protocol
 
 from engine.interfaces import SemanticLayerProtocol
-from engine.phase5.prompts import SQL_GEN_SYSTEM, build_sql_user_prompt
-from engine.phase5.templates import TEMPLATES
+from engine.generation.prompts import SQL_GEN_SYSTEM, build_sql_user_prompt
+from engine.generation.templates import TEMPLATES
 from engine.types import AnalyticalSpec, Filter, MetricFilter, TimeConstraint
 
 

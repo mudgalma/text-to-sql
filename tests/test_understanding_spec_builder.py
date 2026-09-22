@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from engine.phase4.spec_builder import SpecBuilder
+from engine.understanding.spec_builder import SpecBuilder
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.tagger import Tagger
 from engine.types import AnalyticalSpec, EntitySpan, OrderSpec, TaggedQuery, Token
@@ -130,6 +130,6 @@ def test_generic_partitioned_rule_uses_canonical_span_values() -> None:
 
 
 def test_rule_source_has_no_dataset_entity_literals() -> None:
-    source = Path("engine/phase4/rule_builder.py").read_text().lower()
+    source = Path("engine/understanding/rule_builder.py").read_text().lower()
     for forbidden in ("profit", "city", "revenue", "region", "target_revenue", "avg_order_value"):
         assert f'"{forbidden}"' not in source

@@ -389,27 +389,27 @@ text-tosql/
 │   ├── semantic_layer.py            # DuckDB schema, view registration, data quality
 │   ├── tagger.py                    # Deterministic lexical tagger with conflict resolution
 │   ├── value_index.py               # Cardinality-tiered exact/fuzzy value lookup
-│   ├── phase4/
+│   ├── understanding/
 │   │   ├── spec_builder.py          # Orchestrates rule + optional LLM spec construction
 │   │   ├── rule_builder.py          # Deterministic role-sequence pattern matcher
 │   │   ├── llm_builder.py           # Optional Anthropic structured output builder
 │   │   ├── temporal_anchor.py       # Time constraint resolution
 │   │   └── prompts.py               # LLM prompt templates
-│   ├── phase5/
+│   ├── generation/
 │   │   ├── generator.py             # SQL generation with template engine + LLM fallback
 │   │   ├── templates.py             # 7 validated SQL grammar templates
 │   │   └── prompts.py               # SQL generation prompt templates
-│   ├── phase6/
+│   ├── execution/
 │   │   └── executor.py              # Safe SQL execution with structured results
-│   ├── phase7/
+│   ├── correction/
 │   │   ├── repairer.py              # Bounded self-correction (max 2 retries)
 │   │   └── prompts.py               # SQL repair prompt templates
-│   ├── phase8/
+│   ├── scoring/
 │   │   └── scorer.py                # 6-signal weighted confidence scorer
-│   ├── phase9/
+│   ├── insight/
 │   │   ├── explainer.py             # Deterministic + optional LLM explanation
 │   │   └── prompts.py               # Explanation prompt templates
-│   └── phase10/
+│   └── memory/
 │       └── feedback_store.py        # Verified exact-match correction store
 ├── tests/                           # 14 comprehensive test suites
 ├── scripts/
@@ -549,14 +549,14 @@ uv run pytest --cov=engine -q
 | `test_value_index.py` | Cardinality-tiered indexing, fuzzy matching |
 | `test_tagger.py` | Tokenization, span recognition, conflict resolution |
 | `test_types.py` | Data contract integrity, frozen guarantees |
-| `test_phase4_spec_builder.py` | Rule + LLM spec orchestration, grounding |
-| `test_phase4_llm_builder.py` | Structured output parsing, tool-use fallback |
-| `test_phase5_generator.py` | Template rendering, SQL validation, LLM fallback |
-| `test_phase6_executor.py` | Safe execution, error capture |
-| `test_phase7_repairer.py` | Bounded retry, repair validation |
-| `test_phase8_scorer.py` | 6-signal confidence calculation |
-| `test_phase9_explainer.py` | Deterministic + LLM explanation paths |
-| `test_phase10_feedback_and_pipeline.py` | Exact-match corrections, end-to-end flow |
+| `test_understanding_spec_builder.py` | Rule + LLM spec orchestration, grounding |
+| `test_understanding_llm_builder.py` | Structured output parsing, tool-use fallback |
+| `test_generation_generator.py` | Template rendering, SQL validation, LLM fallback |
+| `test_execution_executor.py` | Safe execution, error capture |
+| `test_correction_repairer.py` | Bounded retry, repair validation |
+| `test_scoring_scorer.py` | 6-signal confidence calculation |
+| `test_insight_explainer.py` | Deterministic + LLM explanation paths |
+| `test_memory_feedback_and_pipeline.py` | Exact-match corrections, end-to-end flow |
 | `golden_specs.py` | Reference specifications for regression testing |
 
 ---

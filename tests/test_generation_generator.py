@@ -5,7 +5,7 @@ import inspect
 
 import pytest
 
-from engine.phase5.generator import SQLGenerationError, SQLGenerator
+from engine.generation.generator import SQLGenerationError, SQLGenerator
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.types import AnalyticalSpec, Filter, MetricFilter, OrderSpec, TimeConstraint
 from tests.golden_specs import GOLDEN_SPECS
@@ -46,7 +46,7 @@ def test_all_golden_specs_produce_executable_sql(
 def test_templates_do_not_embed_dataset_vocabulary() -> None:
     """Keep templates reusable; semantic names are supplied only at render time."""
 
-    from engine.phase5 import templates
+    from engine.generation import templates
 
     source = inspect.getsource(templates)
     forbidden = (

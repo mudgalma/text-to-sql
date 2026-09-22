@@ -59,7 +59,7 @@ class AnalyticalSpecOutput(BaseModel):
 class LLMSpecBuilder:
     """Build a spec through an injected Anthropic client, with one tool fallback."""
 
-    MODEL = "claude-haiku-4-5-20251001"
+    MODEL = "anthropic/claude-3.5-haiku"
 
     def __init__(self, client: Any, semantic_layer: SemanticLayerProtocol) -> None:
         self._client = client
@@ -69,14 +69,15 @@ class LLMSpecBuilder:
         """Try structured parsing, then one tool-use fallback on any client failure."""
 
         try:
-            response = self._client.messages.parse(
+            response = self._client.beta.chat.completions.parse(
                 model=self.MODEL,
-                max_tokens=1024,
-                system=[{"type": "text", "text": build_system_prompt(self._sl)}],
-                messages=[{"role": "user", "content": build_user_prompt(tagged)}],
-                output_format=AnalyticalSpecOutput,
+                messages=[
+                    {"role": "system", "content": build_system_prompt(self._sl)},
+                    {"role": "user", "content": build_user_prompt(tagged)}
+                ],
+                response_format=AnalyticalSpecOutput,
             )
-            return self._to_spec(response.parsed_output)
+            return self._to_spec(response.choices[0].message.parsed)
         except Exception as error:
             LOGGER.warning("llm_structured_build_failed", exc_info=error)
             return self._build_via_tool_use(tagged)
@@ -85,17 +86,19 @@ class LLMSpecBuilder:
         """Use an explicit tool schema once when structured parsing is unavailable."""
 
         try:
-            response = self._client.messages.create(
+            response = self._client.chat.completions.create(
                 model=self.MODEL,
-                max_tokens=1024,
-                system=build_system_prompt(self._sl),
-                messages=[{"role": "user", "content": build_user_prompt(tagged)}],
+                messages=[
+                    {"role": "system", "content": build_system_prompt(self._sl)},
+                    {"role": "user", "content": build_user_prompt(tagged)}
+                ],
                 tools=[self._tool_definition()],
-                tool_choice={"type": "tool", "name": "build_analytical_spec"},
+                tool_choice={"type": "function", "function": {"name": "build_analytical_spec"}},
             )
-            for block in response.content:
-                if getattr(block, "type", None) == "tool_use":
-                    return self._to_spec(block.input)
+            message = response.choices[0].message
+            if message.tool_calls:
+                import json
+                return self._to_spec(json.loads(message.tool_calls[0].function.arguments))
             return None
         except Exception as error:
             LOGGER.warning("llm_tool_build_failed", exc_info=error)
@@ -106,9 +109,12 @@ class LLMSpecBuilder:
         """Return the tool schema for providers without parse support."""
 
         return {
-            "name": "build_analytical_spec",
-            "description": "Return one grounded analytical specification.",
-            "input_schema": AnalyticalSpecOutput.model_json_schema(),
+            "type": "function",
+            "function": {
+                "name": "build_analytical_spec",
+                "description": "Return one grounded analytical specification.",
+                "parameters": AnalyticalSpecOutput.model_json_schema(),
+            }
         }
 
     @staticmethod

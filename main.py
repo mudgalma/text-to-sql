@@ -14,6 +14,8 @@ from engine.execution.executor import Executor
 from engine.correction.repairer import SelfCorrector
 from engine.scoring.scorer import ConfidenceScorer
 from engine.insight.explainer import ExplanationClient, Explainer
+from engine.understanding.llm_builder import LLMSpecBuilder
+import os
 from engine.semantic_layer import DuckDBSemanticLayer
 from engine.tagger import Tagger, TaggerError
 from engine.types import AnalyticalSpec
@@ -21,6 +23,24 @@ from engine.value_index import CardinalityTieredValueIndex
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+class OpenRouterAdapter:
+    """Adapter to make OpenAI client satisfy the generate(system, user) -> str protocol."""
+    
+    def __init__(self, client: Any, model: str = "anthropic/claude-3.5-haiku"):
+        self._client = client
+        self._model = model
+
+    def generate(self, *, system: str, user: str) -> str:
+        response = self._client.chat.completions.create(
+            model=self._model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        )
+        return response.choices[0].message.content
 
 
 def load_queries(path_value: str | Path) -> list[str]:
@@ -56,13 +76,24 @@ def run_pipeline(
         data_dir / "data_dictionary.json",
     )
     try:
+        llm_client = None
+        adapter = None
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if api_key:
+            from openai import OpenAI
+            llm_client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
+            adapter = OpenRouterAdapter(llm_client)
+
         tagger = Tagger(layer, CardinalityTieredValueIndex(layer))
-        spec_builder = SpecBuilder(layer)
-        generator = SQLGenerator(layer)
+        
+        llm_builder = LLMSpecBuilder(llm_client, layer) if llm_client else None
+        spec_builder = SpecBuilder(layer, llm_builder=llm_builder)
+        
+        generator = SQLGenerator(layer, llm_client=adapter)
         executor = Executor(layer)
-        corrector = SelfCorrector(executor, layer)
+        corrector = SelfCorrector(executor, layer, llm_client=adapter)
         scorer = ConfidenceScorer(layer)
-        explainer = Explainer(explanation_client)
+        explainer = Explainer(explanation_client or adapter)
         feedback = FeedbackStore(feedback_path or data_dir / "feedback_log.csv")
         return [
             _run_query(
@@ -116,7 +147,7 @@ def _run_query(
         execution=final,
         retries_used=correction.retries_used,
         rule_spec_present=True,
-        llm_spec_present=False,
+        llm_spec_present=bool(spec.defaults_applied and "llm_fallback" in spec.defaults_applied),
         specs_agree=None,
     )
     explanation = explainer.explain(
@@ -125,7 +156,7 @@ def _run_query(
         confidence=confidence.final,
         retries_used=correction.retries_used,
         rule_spec_present=True,
-        llm_spec_present=False,
+        llm_spec_present=bool(spec.defaults_applied and "llm_fallback" in spec.defaults_applied),
         specs_agree=None,
         template_path_used=not feedback_applied,
         result_count=len(final.df) if final.df is not None else None,

@@ -16,19 +16,25 @@ def _semantic_layer() -> DuckDBSemanticLayer:
 
 
 def test_parse_output_becomes_domain_spec() -> None:
-    class Messages:
+    class Completions:
         def parse(self, **kwargs):
             return SimpleNamespace(
-                parsed_output=AnalyticalSpecOutput(
+                choices=[SimpleNamespace(message=SimpleNamespace(parsed=AnalyticalSpecOutput(
                     operation="aggregate",
                     metrics=["profit"],
                     group_by=["city"],
-                )
+                )))]
             )
+    class Chat:
+        completions = Completions()
+    class Beta:
+        chat = Chat()
+    class MockClient:
+        beta = Beta()
 
     layer = _semantic_layer()
     try:
-        spec = LLMSpecBuilder(SimpleNamespace(messages=Messages()), layer).build(
+        spec = LLMSpecBuilder(MockClient(), layer).build(
             TaggedQuery("q", [], [])
         )
         assert spec is not None
@@ -39,7 +45,7 @@ def test_parse_output_becomes_domain_spec() -> None:
 
 
 def test_parse_exception_uses_tool_fallback_once() -> None:
-    class Messages:
+    class Completions:
         def __init__(self) -> None:
             self.create_calls = 0
 
@@ -48,21 +54,35 @@ def test_parse_exception_uses_tool_fallback_once() -> None:
 
         def create(self, **kwargs):
             self.create_calls += 1
-            block = SimpleNamespace(
-                type="tool_use",
-                input={"operation": "aggregate", "metrics": ["profit"]},
+            import json
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(
+                    tool_calls=[SimpleNamespace(
+                        function=SimpleNamespace(arguments=json.dumps({"operation": "aggregate", "metrics": ["profit"]}))
+                    )]
+                ))]
             )
-            return SimpleNamespace(content=[block])
+            
+    class Chat:
+        def __init__(self):
+            self.completions = Completions()
+    class Beta:
+        def __init__(self, chat):
+            self.chat = chat
+    class MockClient:
+        def __init__(self):
+            self.chat = Chat()
+            self.beta = Beta(self.chat)
 
-    messages = Messages()
+    client = MockClient()
     layer = _semantic_layer()
     try:
-        spec = LLMSpecBuilder(SimpleNamespace(messages=messages), layer).build(
+        spec = LLMSpecBuilder(client, layer).build(
             TaggedQuery("q", [], [])
         )
         assert spec is not None
         assert spec.metrics == ["profit"]
-        assert messages.create_calls == 1
+        assert client.chat.completions.create_calls == 1
     finally:
         layer.close()
 

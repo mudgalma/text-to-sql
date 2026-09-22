@@ -335,7 +335,7 @@ The engine defines **four optional LLM seams**, each with strict contracts and f
 flowchart TB
     subgraph S1["1 - Structured Spec Parsing"]
         direction LR
-        A1["Anthropic Claude Haiku"] --> B1["Pydantic Validation"]
+        A1["OpenRouter (OpenAI SDK)"] --> B1["Pydantic Validation"]
         B1 --> C1["Grounding Check"]
         C1 -->|Pass| D1["Use LLM Spec"]
         C1 -->|Fail| E1["Fall back to Rules"]
@@ -392,7 +392,7 @@ text-tosql/
 │   ├── understanding/
 │   │   ├── spec_builder.py          # Orchestrates rule + optional LLM spec construction
 │   │   ├── rule_builder.py          # Deterministic role-sequence pattern matcher
-│   │   ├── llm_builder.py           # Optional Anthropic structured output builder
+│   │   ├── llm_builder.py           # Optional OpenRouter structured output builder
 │   │   ├── temporal_anchor.py       # Time constraint resolution
 │   │   └── prompts.py               # LLM prompt templates
 │   ├── generation/
